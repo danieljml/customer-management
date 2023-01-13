@@ -19,27 +19,20 @@ const style = {
   borderRadius: '10px',
 };
 
-function BasicModal({initialValues, modalSave, modalEdit}) {
-  let { handleClose, open, updateCustomerInfo, editModal, infoAlert } = useContext(ThemeContext);
-  let { name, lastname, email, phone, address } = initialValues();
+function BasicModal({ inputValues, modalSave, modalEdit }) {
+  const { handleClose, open, updateCustomerInfo, editModal, infoAlert } = useContext(ThemeContext);
+  const values = inputValues(), lastValues = values.at(-1);
 
   useEffect(() => {
     if (!editModal) {
-      name.setValue('');
-      lastname.setValue('');
-      email.setValue('');
-      address.setValue('');
-      phone.setValue('');
+      values.map(item => item.setValue(''))
     }
   }, [open]);
 
   useEffect(() => {
     if (editModal) {
-      name.setValue(updateCustomerInfo.firstname);
-      lastname.setValue(updateCustomerInfo.lastname);
-      email.setValue(updateCustomerInfo.email);
-      address.setValue(updateCustomerInfo.address);
-      phone.setValue(updateCustomerInfo.phone);
+      console.log(values)
+      values.map(item => item.setValue(updateCustomerInfo[item.key]))
     }
   }, [updateCustomerInfo]);
 
@@ -52,21 +45,17 @@ function BasicModal({initialValues, modalSave, modalEdit}) {
             {editModal ? 'Modificar cliente' : 'Agregar cliente'}
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField id="outlined-name" label="Nombre" value={name.value} onChange={name.onChange} type={"text"} />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField id="outlined-name" label="Apellido" value={lastname.value} onChange={lastname.onChange} type={"text"} />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField id="outlined-name" label="Email" value={email.value} onChange={email.onChange} type={"email"} />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField id="outlined-name" label="Telefono" value={phone.value} onChange={phone.onChange} type={"text"}  />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField id="outlined-name" label="Direccion" value={address.value} onChange={address.onChange} type={"text"} sx={{ width: '100%' }} />
-            </Grid>
+            {values.map(input => {
+              return lastValues.value !== input.value ? (
+                <Grid item xs={6} key={input.id}>
+                  <TextField id="outlined-name" label={input.label} value={input.value} onChange={input.onChange} type={input.type} />
+                </Grid>
+              ) : (
+                <Grid item xs={12} key={input.id}>
+                  <TextField id="outlined-name" label={input.label} value={input.value} onChange={input.onChange} type={input.type} sx={{ width: '100%' }} />
+                </Grid>
+              );
+            })}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
               {editModal ? <CustomeBtn title="Modificar" onClick={() => modalEdit()} /> : <CustomeBtn title="Guardar" onClick={() => modalSave()} />}
             </Grid>

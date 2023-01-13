@@ -7,14 +7,13 @@ import Title from '../components/title/title';
 import CustomizedTable from '../components/table/table';
 import CustomeBtn from '../components/button/button';
 
-
 export const Home = () => {
   let { loadClients, handleClose, setOpen, updateCustomerInfo, setEditModal, setInfoAlert, cleanAlert } = useContext(ThemeContext);
   const name = useField({ type: 'text', defaultValue: '' });
   const lastname = useField({ type: 'text', defaultValue: '' });
   const email = useField({ type: 'email', defaultValue: '' });
   const address = useField({ type: 'text', defaultValue: '' });
-  const phone = useField({ type: 'text' , defaultValue: ''});
+  const phone = useField({ type: 'text', defaultValue: '' });
 
   const columns = [
     { id: 0, title: 'Nombre', key: 'firstname' },
@@ -25,7 +24,13 @@ export const Home = () => {
     { id: 5, title: 'Acciones', key: 'actions' }, // Add this obj if the table need actions
   ];
 
-  const initialValues = () => ({name, lastname, email, phone, address})
+  const inputValues = () => [
+    { ...name, id: 1, label: 'Nombre', key: 'firstname' },
+    { ...lastname, id: 2, label: 'Apellido', key: 'lastname' },
+    { ...email, id: 3, label: 'Email', key: 'email' },
+    { ...phone, id: 4, label: 'Telefono', key: 'phone' },
+    { ...address, id: 5, label: 'Direccion', key: 'address' },
+  ];
 
   const addClientModal = () => {
     setOpen(true);
@@ -95,13 +100,12 @@ export const Home = () => {
     }
   };
 
-
   return (
     <>
       <Title title="Gestion de clientes" />
       <CustomeBtn title="Agregar cliente" onClick={() => addClientModal()} />
-      <BasicModal initialValues={ initialValues } modalSave={saveClient} modalEdit={updateClient}/>
-      <CustomizedTable columns={columns}/>
+      <BasicModal inputValues={inputValues} modalSave={saveClient} modalEdit={updateClient} />
+      <CustomizedTable columns={columns} />
     </>
   );
 };
