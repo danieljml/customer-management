@@ -4,7 +4,6 @@ export const getCustomers = async () => {
     try {
         const data = await fetch(url_api);
         const result = await data.json();
-        console.log(result)
         return result
     }
     catch (error){

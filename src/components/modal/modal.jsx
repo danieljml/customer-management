@@ -1,13 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useContext } from 'react';
-import Box from '@mui/material/Box';
-import { Typography, TextField, Grid } from '@mui/material';
-import Modal from '@mui/material/Modal';
-import { useField } from '../../hooks/useField';
-import CustomeBtn from '../button/button';
-import { addCustomer, updateCustomer } from '../../utils/api/customers';
+import { Box, Typography, TextField, Grid } from '@mui/material';
 import { ThemeContext } from '../../context/customerData';
 import { BasicAlerts } from '../alert/alert';
+import Modal from '@mui/material/Modal';
+import CustomeBtn from '../button/button';
 
 const style = {
   position: 'absolute',
@@ -22,14 +19,9 @@ const style = {
   borderRadius: '10px',
 };
 
-function BasicModal() {
-  let { loadClients, handleClose, open, updateCustomerInfo, editModal, infoAlert, setInfoAlert, cleanAlert } = useContext(ThemeContext);
-  const name = useField({ type: 'text' });
-  const lastname = useField({ type: 'text' });
-  const email = useField({ type: 'email' });
-  const address = useField({ type: 'text' });
-  const phone = useField({ type: 'text' });
-  console.log(infoAlert)
+function BasicModal({initialValues, modalSave, modalEdit}) {
+  let { handleClose, open, updateCustomerInfo, editModal, infoAlert } = useContext(ThemeContext);
+  let { name, lastname, email, phone, address } = initialValues();
 
   useEffect(() => {
     if (!editModal) {
@@ -51,72 +43,9 @@ function BasicModal() {
     }
   }, [updateCustomerInfo]);
 
-  const saveClient = async () => {
-    const body = {
-      firstname: name.value,
-      lastname: lastname.value,
-      email: email.value,
-      phone: phone.value,
-      address: address.value,
-    };
-    const res = await addCustomer(body);
-    handleClose();
-
-    if (res.status === 200) {
-      setInfoAlert({
-        open: true,
-        type: 'success',
-        title: 'Exitoso',
-        content: 'Guardado exitoso',
-      });
-      loadClients();
-      cleanAlert();
-    } else {
-      setInfoAlert({
-        open: true,
-        type: 'error',
-        title: 'Error',
-        content: 'Hubo un error',
-      });
-      cleanAlert();
-    }
-  };
-
-  const updateClient = async () => {
-    const body = {
-      firstname: name.value,
-      lastname: lastname.value,
-      email: email.value,
-      phone: phone.value,
-      address: address.value,
-      id: updateCustomerInfo.id,
-    };
-    const res = await updateCustomer(body);
-    handleClose();
-
-    if (res.status === 200) {
-      setInfoAlert({
-        open: true,
-        type: 'success',
-        title: 'Exitoso',
-        content: 'Modificacion exitosa',
-      });
-      loadClients();
-      cleanAlert();
-    } else {
-      setInfoAlert({
-        open: true,
-        type: 'error',
-        title: 'Error',
-        content: 'Hubo un error',
-      });
-      cleanAlert();
-    }
-  };
-
   return (
     <div>
-      {infoAlert.open ? <BasicAlerts infoAlert={infoAlert}/> : ''}
+      {infoAlert.open ? <BasicAlerts infoAlert={infoAlert} /> : ''}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <Typography sx={{ m: 2, textAlign: 'center', color: 'black' }} id="modal-modal-title" variant="h6" component="h2">
@@ -124,22 +53,22 @@ function BasicModal() {
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <TextField id="outlined-name" label="Nombre" {...name} />
+              <TextField id="outlined-name" label="Nombre" value={name.value} onChange={name.onChange} type={"text"} />
             </Grid>
             <Grid item xs={6}>
-              <TextField id="outlined-name" label="Apellido" {...lastname} />
+              <TextField id="outlined-name" label="Apellido" value={lastname.value} onChange={lastname.onChange} type={"text"} />
             </Grid>
             <Grid item xs={6}>
-              <TextField id="outlined-name" label="Email" {...email} />
+              <TextField id="outlined-name" label="Email" value={email.value} onChange={email.onChange} type={"email"} />
             </Grid>
             <Grid item xs={6}>
-              <TextField id="outlined-name" label="Telefono" {...phone} />
+              <TextField id="outlined-name" label="Telefono" value={phone.value} onChange={phone.onChange} type={"text"}  />
             </Grid>
             <Grid item xs={12}>
-              <TextField id="outlined-name" label="Direccion" {...address} sx={{ width: '100%' }} />
+              <TextField id="outlined-name" label="Direccion" value={address.value} onChange={address.onChange} type={"text"} sx={{ width: '100%' }} />
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-              {editModal ? <CustomeBtn title="Modificar" onClick={() => updateClient()} /> : <CustomeBtn title="Guardar" onClick={() => saveClient()} />}
+              {editModal ? <CustomeBtn title="Modificar" onClick={() => modalEdit()} /> : <CustomeBtn title="Guardar" onClick={() => modalSave()} />}
             </Grid>
           </Grid>
         </Box>

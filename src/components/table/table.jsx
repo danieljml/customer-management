@@ -1,44 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useContext } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { ThemeContext } from '../../context/customerData';
+import {Table, TableBody, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import { StyledTableCell, StyledTableRow } from './tableStyles';
 import CustomeBtn from '../button/button';
-import { deleteCustomer } from '../../utils/api/customers';
-import { ThemeContext } from '../../context/customerData';
 
-export default function CustomizedTable({ columns, actions }) {
-  const { dataCustomer, loadClients, updateClient, cleanAlert, setInfoAlert } = useContext(ThemeContext);
+export default function CustomizedTable({ columns }) {
+  const { dataCustomer, loadClients, updateClient, deleteClient} = useContext(ThemeContext);
   useEffect(() => {
     loadClients();
   }, []);
 
-  const deleteClient = async id => {
-    const res = await deleteCustomer(id);
+  const withoutResults = (
+    <TableRow>
+      <StyledTableCell component="th" scope="row">
+        Sin resultado
+      </StyledTableCell>
+    </TableRow>
+  );
 
-    if (res.status === 200) {
-      setInfoAlert({
-        open: true,
-        type: 'success',
-        title: 'Exitoso',
-        content: 'Eliminacion exitosa',
-      });
-      loadClients();
-      cleanAlert();
-    } else {
-      setInfoAlert({
-        open: true,
-        type: 'error',
-        title: 'Error',
-        content: 'Hubo un error',
-      });
-      cleanAlert();
-    }
-  };
+  const tableRows = !dataCustomer
+    ? withoutResults
+    : dataCustomer.map(row => (
+        <StyledTableRow key={row.id.toString()}>
+          {columns.map((cell, j) => {
+            return cell.key === 'actions' ? (
+              <StyledTableCell align="left" key={cell.id.toString()}>
+                <CustomeBtn title="Modificar" onClick={() => updateClient(row.id)} />
+                <CustomeBtn title="Eliminar" onClick={() => deleteClient(row.id)} />
+              </StyledTableCell>
+            ) : (
+              <StyledTableCell align="left" key={cell.id.toString()}>
+                {row[columns[j].key]}
+              </StyledTableCell>
+            );
+          })}
+        </StyledTableRow>
+      ));
 
   return (
     <TableContainer component={Paper}>
@@ -52,35 +50,7 @@ export default function CustomizedTable({ columns, actions }) {
             ))}
           </TableRow>
         </TableHead>
-        <TableBody>
-          {!dataCustomer ? (
-            <TableRow>
-              <StyledTableCell component="th" scope="row">
-                Sin resultado
-              </StyledTableCell>
-            </TableRow>
-          ) : (
-            dataCustomer.map((row, i)=> (
-              <StyledTableRow key={row.id}>
-                <StyledTableCell component="th" scope="row">
-                  {row[columns[0].key]}
-                </StyledTableCell>
-                <StyledTableCell align="left">{row[columns[1].key]}</StyledTableCell>
-                <StyledTableCell align="left">{row[columns[2].key]}</StyledTableCell>
-                <StyledTableCell align="left">{row[columns[3].key]}</StyledTableCell>
-                <StyledTableCell align="left">{row[columns[4].key]}</StyledTableCell>
-                {actions ? (
-                  <StyledTableCell align="left">
-                    <CustomeBtn title="Modificar" onClick={() => updateClient(row.id)} />
-                    <CustomeBtn title="Eliminar" onClick={() => deleteClient(row.id)} />
-                  </StyledTableCell>
-                ) : (
-                  ''
-                )}
-              </StyledTableRow>
-            ))
-          )}
-        </TableBody>
+        <TableBody>{tableRows}</TableBody>
       </Table>
     </TableContainer>
   );

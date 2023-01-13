@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { findCustomer, getCustomers } from '../utils/api/customers';
+import { findCustomer, getCustomers, deleteCustomer } from '../utils/api/customers';
+
 export const ThemeContext = React.createContext();
 
 const ContextCustomerData = props => {
@@ -26,6 +27,29 @@ const ContextCustomerData = props => {
     setEditModal(true);
   };
 
+  const deleteClient = async id => {
+    const res = await deleteCustomer(id);
+
+    if (res.status === 200) {
+      setInfoAlert({
+        open: true,
+        type: 'success',
+        title: 'Exitoso',
+        content: 'Eliminacion exitosa',
+      });
+      loadClients();
+      cleanAlert();
+    } else {
+      setInfoAlert({
+        open: true,
+        type: 'error',
+        title: 'Error',
+        content: 'Hubo un error',
+      });
+      cleanAlert();
+    }
+  };
+
   const cleanAlert = () => {
     return setTimeout(() => {
       setInfoAlert({
@@ -44,6 +68,7 @@ const ContextCustomerData = props => {
         open,
         setOpen,
         updateClient,
+        deleteClient,
         updateCustomerInfo,
         editModal,
         setEditModal,

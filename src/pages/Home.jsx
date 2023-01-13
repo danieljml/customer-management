@@ -1,33 +1,107 @@
-import { useContext, useState } from 'react';
-import CustomeBtn from '../components/button/button';
-import { BasicModal } from '../components/modal/modal';
-import CustomizedTable from '../components/table/table';
-import Title from '../components/title/title';
+import { useContext } from 'react';
 import { ThemeContext } from '../context/customerData';
+import { addCustomer, updateCustomer } from '../utils/api/customers';
+import { BasicModal } from '../components/modal/modal';
+import { useField } from '../hooks/useField';
+import Title from '../components/title/title';
+import CustomizedTable from '../components/table/table';
+import CustomeBtn from '../components/button/button';
+
 
 export const Home = () => {
-  const { setOpen, setEditModal } = useContext(ThemeContext);
+  let { loadClients, handleClose, setOpen, updateCustomerInfo, setEditModal, setInfoAlert, cleanAlert } = useContext(ThemeContext);
+  const name = useField({ type: 'text', defaultValue: '' });
+  const lastname = useField({ type: 'text', defaultValue: '' });
+  const email = useField({ type: 'email', defaultValue: '' });
+  const address = useField({ type: 'text', defaultValue: '' });
+  const phone = useField({ type: 'text' , defaultValue: ''});
 
   const columns = [
-    { id: 1, title: 'Nombre', key: 'firstname' },
-    { id: 2, title: 'Apellido', key: 'lastname' },
-    { id: 3, title: 'Email', key: 'email' },
-    { id: 4, title: 'Telefono', key: 'phone' },
-    { id: 5, title: 'Direccion', key: 'address' },
-    { id: 6, title: 'Acciones' },
+    { id: 0, title: 'Nombre', key: 'firstname' },
+    { id: 1, title: 'Apellido', key: 'lastname' },
+    { id: 2, title: 'Email', key: 'email' },
+    { id: 3, title: 'Telefono', key: 'phone' },
+    { id: 4, title: 'Direccion', key: 'address' },
+    { id: 5, title: 'Acciones', key: 'actions' }, // Add this obj if the table need actions
   ];
+
+  const initialValues = () => ({name, lastname, email, phone, address})
 
   const addClientModal = () => {
     setOpen(true);
     setEditModal(false);
   };
 
+  const saveClient = async () => {
+    const body = {
+      firstname: name.value,
+      lastname: lastname.value,
+      email: email.value,
+      phone: phone.value,
+      address: address.value,
+    };
+    const res = await addCustomer(body);
+    handleClose();
+
+    if (res.status === 200) {
+      setInfoAlert({
+        open: true,
+        type: 'success',
+        title: 'Exitoso',
+        content: 'Guardado exitoso',
+      });
+      loadClients();
+      cleanAlert();
+    } else {
+      setInfoAlert({
+        open: true,
+        type: 'error',
+        title: 'Error',
+        content: 'Hubo un error',
+      });
+      cleanAlert();
+    }
+  };
+
+  const updateClient = async () => {
+    const body = {
+      firstname: name.value,
+      lastname: lastname.value,
+      email: email.value,
+      phone: phone.value,
+      address: address.value,
+      id: updateCustomerInfo.id,
+    };
+    const res = await updateCustomer(body);
+    handleClose();
+
+    if (res.status === 200) {
+      setInfoAlert({
+        open: true,
+        type: 'success',
+        title: 'Exitoso',
+        content: 'Modificacion exitosa',
+      });
+      loadClients();
+      cleanAlert();
+    } else {
+      setInfoAlert({
+        open: true,
+        type: 'error',
+        title: 'Error',
+        content: 'Hubo un error',
+      });
+      cleanAlert();
+    }
+  };
+
+
   return (
     <>
       <Title title="Gestion de clientes" />
       <CustomeBtn title="Agregar cliente" onClick={() => addClientModal()} />
-      <BasicModal />
-      <CustomizedTable columns={columns} actions={true}/>
+      <BasicModal initialValues={ initialValues } modalSave={saveClient} modalEdit={updateClient}/>
+      <CustomizedTable columns={columns}/>
     </>
   );
 };
