@@ -1,7 +1,8 @@
 import './App.css';
+import { Home } from './pages/Home';
+import {Products} from './pages/Products';
 import { Routes, Route } from 'react-router-dom';
 import CustomeBar from './components/navigationBar/navigationBar';
-import { Home } from './pages/Home';
 import Title from './components/title/title';
 
 function App() {
@@ -10,7 +11,7 @@ function App() {
         <CustomeBar />
         <Routes>
           <Route path="/" element={<Home />} end />
-          <Route path="/productos" element={<Title />} />
+          <Route path="/productos" element={<Products />} />
           <Route path="/nosotros" element={<Title />} />
           <Route path="/servicios" element={<Title />} />
           <Route path="/contactos" element={<Title />} />

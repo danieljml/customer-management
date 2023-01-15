@@ -4,6 +4,7 @@ import TableRow from '@mui/material/TableRow';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  padding: '20px',
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
       color: theme.palette.common.white,
@@ -14,6 +15,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
   
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  height: '100px',
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },

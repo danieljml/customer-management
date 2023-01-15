@@ -4,7 +4,7 @@ import { findCustomer, getCustomers, deleteCustomer } from '../utils/api/custome
 export const ThemeContext = React.createContext();
 
 const ContextCustomerData = props => {
-  const [dataCustomer, setDataCustomer] = useState(false);
+  const [dataTable, setDataTable] = useState(false);
   const [open, setOpen] = useState(false);
   const [updateCustomerInfo, setUpdateCustomerInfo] = useState({});
   const [editModal, setEditModal] = useState(false);
@@ -12,7 +12,7 @@ const ContextCustomerData = props => {
 
   const loadClients = async () => {
     const response = await getCustomers();
-    setDataCustomer(response);
+    setDataTable(response);
   };
 
   const handleClose = () => {
@@ -61,8 +61,8 @@ const ContextCustomerData = props => {
   return (
     <ThemeContext.Provider
       value={{
-        dataCustomer,
-        setDataCustomer,
+        dataTable,
+        setDataTable,
         loadClients,
         handleClose,
         open,
