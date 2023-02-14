@@ -22,21 +22,48 @@ const Products = () => {
     { id: 4, title: 'Imagen', key: 'thumbnail' },
   ];
 
-  const products = async value => {
-    const res = await getProducts(value);
-    setDataTable(res.products);
-  };
-
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
   const tabs = [
-    { id: 0, label: 'Telefonos', value: 'smartphones' },
-    { id: 1, label: 'Laptops', value: 'laptops' },
-    { id: 2, label: 'Motocicletas', value: 'motorcycle' },
-    { id: 3, label: 'Autos', value: 'automotive' },
+    {
+      id: 0,
+      label: 'Motocicletas',
+      value: 'motorcycle',
+      images: ['https://acortar.link/8f0gvy', 'https://acortar.link/fuOdMt', 'https://acortar.link/ltENh5', 'https://acortar.link/re7sOH'],
+    },
+    {
+      id: 1,
+      label: 'Laptops',
+      value: 'laptops',
+      images: [
+        'https://acortar.link/qedQ3z',
+        'https://acortar.link/zobSMK',
+        'https://acortar.link/XPfE5B',
+        'https://acortar.link/KHMCCf',
+        'https://acortar.link/Yc2sWk',
+      ],
+    },
+    {
+      id: 2,
+      label: 'Telefonos',
+      value: 'smartphones',
+      images: [],
+    },
+    {
+      id: 3,
+      label: 'Autos',
+      value: 'automotive',
+      images: [],
+    },
   ];
+
+  const products = async value => {
+    const res = await getProducts(value);
+    const data = res.products.map((item, i) => ({ ...item, thumbnail: tabs.find(item => item.value === value).images[i] ?? item.thumbnail }));
+    setDataTable(data);
+  };
 
   return (
     <>

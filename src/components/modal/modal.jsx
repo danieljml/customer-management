@@ -30,7 +30,8 @@ function BasicModal({ inputValues, modalSave, modalEdit }) {
   }, [open]);
 
   useEffect(() => {
-    if (editModal) {
+    if (editModal) {     
+       console.log("Test")
       console.log(values)
       values.map(item => item.setValue(updateCustomerInfo[item.key]))
     }
